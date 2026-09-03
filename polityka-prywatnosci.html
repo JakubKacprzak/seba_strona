@@ -17,6 +17,7 @@
       --b:-apple-system,'Helvetica Neue',Arial,sans-serif;
       --gutter:clamp(22px,4.5vw,60px);
       --maxw:1180px;
+      --header-h:61px;
     }
     :root[data-theme="light"]{
       --bg:#F4F5F5; --bg2:#E8EAEA; --fg:#0E0F0F; --fg2:#4C5051; --line:#C6CACB;
@@ -28,11 +29,14 @@
     a{color:var(--fg);text-decoration:none}
     a:hover{color:var(--fg2)}
     ::selection{background:var(--fg);color:var(--bg)}
-    header{border-bottom:1px solid var(--line);padding:20px var(--gutter)}
+    header{position:fixed;top:0;left:0;right:0;z-index:10;background:var(--bg);
+      border-bottom:1px solid var(--line);padding:20px 0}
+    .header-inner,.footer-inner{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter)}
     .powrot{display:inline-flex;align-items:center;gap:8px;font-family:var(--m);
       font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--fg2)}
     .powrot:hover{color:var(--fg)}
-    main{max-width:var(--maxw);margin:0 auto;padding:clamp(48px,7vw,88px) var(--gutter)}
+    main{max-width:var(--maxw);margin:0 auto;
+      padding:calc(var(--header-h) + clamp(48px,7vw,88px)) var(--gutter) clamp(48px,7vw,88px)}
     .etykieta{font-family:var(--m);font-size:11px;letter-spacing:0.18em;
       text-transform:uppercase;color:var(--fg2)}
     h1{margin:16px 0 0;font:var(--d);font-size:clamp(1.7rem,4.2vw,2.6rem);
@@ -55,7 +59,9 @@
 </head>
 <body>
   <header>
-    <a class="powrot" href="index.html">&larr; Sebastian Krawczyk</a>
+    <div class="header-inner">
+      <a class="powrot" href="index.html">&larr; Sebastian Krawczyk</a>
+    </div>
   </header>
   <main>
     <span class="etykieta">Dokument referencyjny</span>
@@ -99,7 +105,9 @@
     </div>
   </main>
   <footer>
-    <p>sebakrawczyk.pl &copy; 2026</p>
+    <div class="footer-inner">
+      <p>sebakrawczyk.pl &copy; 2026</p>
+    </div>
   </footer>
   <script>
     try {
