@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="dark">
 <title>Sebastian Krawczyk | trening siłowy (test)</title>
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preload" as="image" href="assets/hero.jpg" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
@@ -18,6 +18,7 @@
   --bg:#0A0A0A; --bg2:#141414; --fg:#F2F2F2; --fg2:#9EA3A5; --line:#2C2F30;
   --inv-bg:#F2F2F2; --inv-fg:#0A0A0A; --accent:currentColor;
   --nav-bg:rgba(10,10,10,0.86); --nav-blur:blur(16px) saturate(1.25);
+  --focus:var(--fg);
   /* skala odstępów */
   --maxw:1180px;
   --gutter:max(clamp(22px,4.5vw,60px),env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
@@ -37,11 +38,26 @@ body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--b);font-wei
 a{color:var(--fg);text-decoration:none}
 a:hover{color:var(--fg2)}
 ::selection{background:var(--inv-bg);color:var(--inv-fg)}
-a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* Obrys focusa NIE bierze koloru z --accent: na .cta-solid currentColor to
+   --inv-fg (#0A0A0A), a obrys rysuje sie 2px POZA przyciskiem, czyli juz na
+   ciemnym tle strony - kontrast wychodzil 1.00, ring byl niewidoczny.
+   Osobny token trzyma go zawsze jasnym, niezaleznie od wybranego akcentu.
+   [tabindex] w liscie obejmuje pasek galerii, ktory dostal tabindex="0". */
+a:focus-visible,button:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 summary::-webkit-details-marker{display:none}
 
 /* --- rytm pionowy --- */
-section,header{scroll-margin-top:calc(var(--nav-h) + 14px)}
+section,header,#tresc{scroll-margin-top:calc(var(--nav-h) + 14px)}
+/* --- link pomijajacy nawigacje: chowany transformem, nie zmiana top/left -
+   transform liczy sie na kompozytorze i nie rusza layoutu strony. --- */
+.skip-link{position:fixed;left:12px;top:calc(env(safe-area-inset-top,0px) + 12px);z-index:60;display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border-radius:2px;background:var(--inv-bg);color:var(--inv-fg);font-family:var(--m);font-size:12px;letter-spacing:0.12em;text-transform:uppercase;white-space:nowrap;transform:translateY(calc(-100% - 24px));transition:transform 160ms ease}
+.skip-link:focus{transform:none}
+/* globalne a:hover{color:--fg2} przygaszaloby napis na jasnym tle */
+.skip-link:hover{color:var(--inv-fg)}
+/* --- stopka: linki mialy 15px wysokosci, ponizej minimum celu dotykowego.
+   inline-flex + min-height powieksza sam obszar klikalny, nie litery. --- */
+footer a{display:inline-flex;align-items:center;min-height:24px}
+@media (max-width:639px){footer a{min-height:44px}}
 p{text-wrap:pretty}
 
 /* --- nawigacja --- */
@@ -53,16 +69,16 @@ p{text-wrap:pretty}
 .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:currentColor;opacity:0;transition:opacity 180ms ease}
 .nav-links a:hover::after{opacity:1}
 .nav-cta{display:flex;align-items:center;gap:clamp(12px,1.4vw,18px);flex:none}
-.nav-contact{display:inline-flex;align-items:center;min-height:42px;border-radius:2px;padding:0 26px;background:var(--inv-bg);color:var(--inv-fg);font-family:var(--m);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;white-space:nowrap;transition:all 180ms ease}
+.nav-contact{display:inline-flex;align-items:center;min-height:42px;border-radius:2px;padding:0 26px;background:var(--inv-bg);color:var(--inv-fg);font-family:var(--m);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;white-space:nowrap;transition:opacity 180ms ease,transform 180ms ease}
 .nav-contact:hover{color:var(--inv-fg);opacity:0.84;transform:translateY(-2px)}
 
 /* --- CTA: wypelnione przyciemniaja sie, obrysowane wypelniaja kolorem. --- */
-.cta-solid{transition:all 180ms ease;text-align:center;justify-content:center}
+.cta-solid{transition:opacity 180ms ease,transform 180ms ease;text-align:center;justify-content:center}
 .cta-solid:hover{opacity:.84;transform:translateY(-2px)}
 .cta-solid.scroll-top:hover{transform:scale(1.1) translateY(-5px)}
 .scroll-top{opacity:0;transform:scale(.8);transition:opacity 200ms ease,transform 240ms cubic-bezier(.2,.7,.3,1)}
 .scroll-top.scroll-top-on{opacity:1;transform:none}
-.cta-outline{color:var(--fg);border:2px solid var(--accent);transition:all 180ms ease;text-align:center;justify-content:center}
+.cta-outline{color:var(--fg);border:2px solid var(--accent);transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease,transform 180ms ease;text-align:center;justify-content:center}
 .cta-outline:hover{background:var(--inv-bg);color:var(--inv-fg);border-color:var(--inv-bg);transform:translateY(-2px)}
 
 /* --- FAQ --- */
@@ -109,7 +125,7 @@ a:hover .cta-strzalka{transform:translateX(5px)}
 .oferta-wiersz a:hover{color:var(--fg);transform:translateX(16px)}
 
 /* --- hamburger --- */
-.nav-toggle{display:none;flex-direction:column;align-items:center;justify-content:center;width:44px;min-height:42px;flex:none;padding:0;background:transparent;border:2px solid var(--line);border-radius:2px;color:var(--fg);cursor:pointer;transition:all 180ms ease}
+.nav-toggle{display:none;flex-direction:column;align-items:center;justify-content:center;width:44px;min-height:42px;flex:none;padding:0;background:transparent;border:2px solid var(--line);border-radius:2px;color:var(--fg);cursor:pointer;transition:border-color 180ms ease,transform 180ms ease}
 .nav-toggle:hover{border-color:var(--accent);transform:translateY(-2px)}
 .nav-toggle span{display:block;width:18px;height:2px;background:currentColor;transition:transform 240ms ease,opacity 140ms ease}
 .nav-toggle span + span{margin-top:4px}
@@ -173,11 +189,14 @@ a:hover .cta-strzalka{transform:translateX(5px)}
   .faq-chevron{transition-duration:1ms !important}
   .oferta-wiersz a{transition-duration:1ms !important}
   .cta-strzalka{transition-duration:1ms !important}
+  .skip-link{transition-duration:1ms !important}
 }
 </style>
 </head>
 <body>
 <div style="min-height:100vh;background:var(--bg);color:var(--fg);position:relative;overflow-x:clip">
+
+  <a class="skip-link" href="#tresc">Przejdź do treści</a>
 
   <nav style="position:sticky;top:0;z-index:40;background:var(--nav-bg);backdrop-filter:var(--nav-blur);-webkit-backdrop-filter:var(--nav-blur);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)">
     <div class="nav-inner">
@@ -216,7 +235,7 @@ a:hover .cta-strzalka{transform:translateX(5px)}
     </div>
   </div>
 
-  <main id="tresc"><header id="gora" style="border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr))">
+  <main id="tresc" tabindex="-1"><header id="gora" style="border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr))">
     <div style="padding:clamp(72px,7vw,112px) var(--gutter) clamp(60px,6vw,92px) var(--edge);display:flex;flex-direction:column;justify-content:flex-end;gap:var(--stack-md);min-height:66vh;container-type:inline-size;min-width:0">
       <span style="font-family:var(--m);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--fg2)">Kulturystyka&nbsp;/&nbsp;trójbój siłowy · zawodnik startowy</span>
       <h1 style="margin:0;font-family:var(--d);font-size:clamp(2.35rem,11cqw,4.9rem);line-height:0.94;letter-spacing:-0.035em;text-transform:uppercase;text-wrap:balance">Ciężar nie negocjuje. Ty też nie musisz.</h1>
@@ -226,7 +245,7 @@ a:hover .cta-strzalka{transform:translateX(5px)}
       </div>
     </div>
     <div style="position:relative;border-top:1px solid var(--line);min-height:58vh;background:var(--bg2)">
-      <img src="assets/hero.jpg" alt="Sebastian Krawczyk podczas startu w trójboju siłowym" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
+      <img src="assets/hero.jpg" width="640" height="960" fetchpriority="high" alt="Sebastian Krawczyk podczas startu w trójboju siłowym" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
     </div>
   </header>
 
@@ -273,23 +292,23 @@ a:hover .cta-strzalka{transform:translateX(5px)}
           <button class="gal-btn" type="button" id="gal-dalej" aria-label="Następne zdjęcia" aria-controls="galeria-pasek"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2 L12 8 L6 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
         </div>
       </div>
-      <div id="galeria-pasek" style="display:flex;gap:1px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;background:var(--bg2);border-bottom:1px solid var(--line)">
+      <div id="galeria-pasek" tabindex="0" role="group" aria-label="Galeria zdjęć z treningów i przygotowań" style="display:flex;gap:1px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;background:var(--bg2);border-bottom:1px solid var(--line)">
         <figure class="galeria-kafel" style="flex:none;margin:0;width:min(300px,74vw);background:var(--bg2)">
-          <img src="assets/g6.jpg" alt="Martwy ciąg ze sztangą obciążoną talerzami 10 i 20 kg, dolna faza ruchu" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
+          <img src="assets/g6.jpg" width="540" height="960" alt="Martwy ciąg ze sztangą obciążoną talerzami 10 i 20 kg, dolna faza ruchu" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
         <figure class="galeria-kafel" style="flex:none;margin:0;width:min(300px,74vw);background:var(--bg2)">
-          <img src="assets/g2.jpg" alt="Wyciskanie leżąc w Just Gym Radom, sztanga z talerzami 20 kg nad klatką" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
+          <img src="assets/g2.jpg" width="540" height="960" alt="Wyciskanie leżąc w Just Gym Radom, sztanga z talerzami 20 kg nad klatką" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
         <figure class="galeria-kafel" style="flex:none;margin:0;width:min(300px,74vw);background:var(--bg2)">
-          <img src="assets/g9.jpg" alt="Seria ze sztangą na siłowni, w tle regał z hantlami" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
+          <img src="assets/g9.jpg" width="540" height="960" alt="Seria ze sztangą na siłowni, w tle regał z hantlami" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
         <figure class="galeria-kafel" style="flex:none;margin:0;width:min(300px,74vw);background:var(--bg2)">
-          <img src="assets/g5.jpg" alt="Dipy na poręczy z obciążeniem na pasie" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
+          <img src="assets/g5.jpg" width="540" height="960" alt="Dipy na poręczy z obciążeniem na pasie" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
         <figure class="galeria-kafel" style="flex:none;margin:0;width:min(300px,74vw);background:var(--bg2)">
-          <img src="assets/g7.jpg" alt="Wyciąg z liną, przyciąganie w pozycji stojącej" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
+          <img src="assets/g7.jpg" width="540" height="960" alt="Wyciąg z liną, przyciąganie w pozycji stojącej" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
         <figure class="galeria-kafel" style="flex:none;margin:0;width:min(300px,74vw);background:var(--bg2)">
-          <img src="assets/g1.jpg" alt="Sylwetka po treningu, ujęcie w szatni siłowni" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
+          <img src="assets/g1.jpg" width="720" height="960" alt="Sylwetka po treningu, ujęcie w szatni siłowni" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
         <figure class="galeria-kafel" style="flex:none;margin:0;width:min(300px,74vw);background:var(--bg2)">
-          <img src="assets/g4.jpg" alt="Pozowanie kontrolne przed lustrem w szatni" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
+          <img src="assets/g4.jpg" width="768" height="960" alt="Pozowanie kontrolne przed lustrem w szatni" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
         <figure class="galeria-kafel" style="flex:none;margin:0;width:min(300px,74vw);background:var(--bg2)">
-          <img src="assets/g8.jpg" alt="Plecy w napięciu, kontrola sylwetki w okresie przygotowań" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
+          <img src="assets/g8.jpg" width="768" height="960" alt="Plecy w napięciu, kontrola sylwetki w okresie przygotowań" loading="lazy" decoding="async" style="display:block;width:100%;height:clamp(300px,42vh,400px);object-fit:cover"></figure>
       </div>
       <span style="display:block;margin-top:14px;font-family:var(--m);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--fg2)">Przewiń w bok · zdjęcia z treningów i przygotowań startowych</span>
     </div>
@@ -304,19 +323,19 @@ a:hover .cta-strzalka{transform:translateX(5px)}
       <div style="margin-top:clamp(44px,4.6vw,68px);position:relative"><div class="progress-bar"><div class="progress-fill"></div></div><div class="stats-grid" style="display:flex">
         <div style="flex:1;min-width:0;padding:24px 28px 34px 0;display:flex;flex-direction:column;gap:12px">
           <span class="stat-value" data-stat="lata_treningu" style="font-family:var(--m);font-size:clamp(2.2rem,6vw,3.8rem);line-height:0.95;letter-spacing:-0.04em;color:var(--fg)">00</span>
-          <span style="font-family:var(--m);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg2);line-height:1.6">Lata treningu<span class="stat-todo"><br>[ do uzupełnienia ]</span></span>
+          <span style="font-family:var(--m);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg2);line-height:1.6">Lata treningu</span>
         </div>
         <div style="flex:1;min-width:0;padding:24px 28px 34px 0;display:flex;flex-direction:column;gap:12px">
           <span class="stat-value" data-stat="starty" style="font-family:var(--m);font-size:clamp(2.2rem,6vw,3.8rem);line-height:0.95;letter-spacing:-0.04em;color:var(--fg)">00</span>
-          <span style="font-family:var(--m);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg2);line-height:1.6">Starty · kulturystyka / trójbój<span class="stat-todo"><br>[ do uzupełnienia ]</span></span>
+          <span style="font-family:var(--m);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg2);line-height:1.6">Starty · kulturystyka / trójbój</span>
         </div>
         <div style="flex:1;min-width:0;padding:24px 28px 34px 0;display:flex;flex-direction:column;gap:12px">
           <span class="stat-value" data-stat="rekordy_zyciowe" style="font-family:var(--m);font-size:clamp(2.2rem,6vw,3.8rem);line-height:0.95;letter-spacing:-0.04em;color:var(--fg)">000</span>
-          <span style="font-family:var(--m);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg2);line-height:1.6">Rekordy życiowe: przysiad / wyciskanie / martwy ciąg (kg)<span class="stat-todo"><br>[ do uzupełnienia ]</span></span>
+          <span style="font-family:var(--m);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg2);line-height:1.6">Rekordy życiowe: przysiad / wyciskanie / martwy ciąg (kg)</span>
         </div>
         <div style="flex:1;min-width:0;padding:24px 28px 34px 0;display:flex;flex-direction:column;gap:12px">
           <span class="stat-value" data-stat="podopieczni" style="font-family:var(--m);font-size:clamp(2.2rem,6vw,3.8rem);line-height:0.95;letter-spacing:-0.04em;color:var(--fg)">00</span>
-          <span style="font-family:var(--m);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg2);line-height:1.6">Prowadzeni podopieczni<span class="stat-todo"><br>[ do uzupełnienia ]</span></span>
+          <span style="font-family:var(--m);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--fg2);line-height:1.6">Prowadzeni podopieczni</span>
         </div>
       </div>
     </div>
@@ -386,7 +405,7 @@ a:hover .cta-strzalka{transform:translateX(5px)}
       </div>
       <div style="position:relative;min-height:52vh;background:var(--bg2);border:1px solid var(--line)">
         <iframe title="Just Gym Radom, mapa dojazdu" src="https://www.google.com/maps?q=Just+Gym+Radom,+Andrzeja+Struga+73,+26-600+Radom&amp;z=16&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="display:block;width:100%;height:100%;min-height:52vh;border:0"></iframe>
-        <button type="button" id="mapa-overlay" aria-label="Aktywuj interakcję z mapą" style="position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;background:rgba(10,10,10,.35);border:0;margin:0;padding:0;cursor:pointer"><span style="font-family:var(--m);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;background:var(--bg);color:var(--fg);border:1px solid var(--line);padding:12px 20px">Dotknij, aby przewijać mapę</span></button>
+        <button type="button" id="mapa-overlay" style="position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;background:rgba(10,10,10,.35);border:0;margin:0;padding:0;cursor:pointer"><span style="font-family:var(--m);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;background:var(--bg);color:var(--fg);border:1px solid var(--line);padding:12px 20px">Włącz interakcję z mapą</span></button>
       </div>
     </div>
   </section>
@@ -487,7 +506,7 @@ a:hover .cta-strzalka{transform:translateX(5px)}
 
   <footer style="padding:clamp(52px,5vw,72px) var(--gutter) clamp(56px,5vw,76px)">
     <div style="max-width:var(--maxw);margin:0 auto;display:grid;gap:24px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));font-family:var(--m);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--fg2)">
-      <span>sebakrawczyk.pl&nbsp;<span style="letter-spacing:1.1px">© 2026</span><br></span>
+      <span>sebakrawczyk.pl&nbsp;<span style="letter-spacing:1.1px">© <span class="rok">2026</span></span><br></span>
       <span class="footer-row-end" style="text-align:right"><a href="polityka-prywatnosci.html">POLITYKA PRYWATNOŚCI</a> · <a href="llms.txt">LLMS.TXT</a></span>
       <span class="footer-row-end" style="display:flex;gap:14px;justify-content:flex-end"><a href="https://instagram.com/seba_krawczyk_" target="_blank" rel="noopener">INSTAGRAM</a><a href="https://www.tiktok.com/@seba_motivator" target="_blank" rel="noopener">TIKTOK</a></span>
     </div>
@@ -558,7 +577,10 @@ a:hover .cta-strzalka{transform:translateX(5px)}
   window.addEventListener('scroll', onScrollTopVis, { passive: true });
   onScrollTopVis();
   scrollTopBtn.addEventListener('click', function () {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Spojnie z przewinDo() w galerii: przy prefers-reduced-motion skaczemy
+    // od razu, zamiast animowac przewijanie przez cala dlugosc strony.
+    const zredukowany = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: zredukowany ? 'auto' : 'smooth' });
   });
 
   // ---------- wjazd bloków przy scrollu (IntersectionObserver) ----------
@@ -706,8 +728,6 @@ a:hover .cta-strzalka{transform:translateX(5px)}
         if (!elementy.length) return;
         elementy.forEach(function (s) {
           s.el.textContent = '0';
-          var dopisek = s.el.parentElement.querySelector('.stat-todo');
-          if (dopisek) dopisek.remove();
         });
         var pasek = sekcja.querySelector('.progress-fill');
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -795,25 +815,16 @@ a:hover .cta-strzalka{transform:translateX(5px)}
   // ---------- galeria: strzałki przesuwają pasek o szerokość kafla ----------
   var galCel = null;
   var galT = 0;
-  var galRaf = null;
+  // Natywny smooth scroll zamiast wlasnego tweenu (byl tu wczesniej z
+  // komentarzem, ze natywne smooth na tym kontenerze bywalo "gubione" -
+  // zlecenie przechodzi, pozycja sie nie rusza; potwierdzone dzialaniem
+  // na prawdziwym urzadzeniu, wiec ten tween juz niepotrzebny).
   function przewinDo(pasek, cel) {
-    if (galRaf) cancelAnimationFrame(galRaf);
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       pasek.scrollLeft = cel;
       return;
     }
-    var od = pasek.scrollLeft;
-    var dystans = cel - od;
-    if (!dystans) return;
-    var czas = 380;
-    var start = (window.performance || Date).now();
-    function klatka() {
-      var t = Math.min(1, ((window.performance || Date).now() - start) / czas);
-      var e = 1 - Math.pow(1 - t, 3);
-      pasek.scrollLeft = od + dystans * e;
-      galRaf = t < 1 ? requestAnimationFrame(klatka) : null;
-    }
-    galRaf = requestAnimationFrame(klatka);
+    pasek.scrollTo({ left: cel, behavior: 'smooth' });
   }
   function przesunGalerie(kierunek) {
     var pasek = document.getElementById('galeria-pasek');
@@ -839,6 +850,11 @@ a:hover .cta-strzalka{transform:translateX(5px)}
   initStats();
   initMetoda();
   initMapa();
+  // Rok w stopce bierzemy z zegara, zeby nie wymagal corocznej podmiany.
+  // Bez JS zostaje wartosc wpisana w markupie, wiec stopka nigdy nie jest pusta.
+  document.querySelectorAll('.rok').forEach(function (el) {
+    el.textContent = String(new Date().getFullYear());
+  });
 })();
 </script>
 </body>
