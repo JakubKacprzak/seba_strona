@@ -583,7 +583,7 @@ a:hover .cta-strzalka{transform:translateX(5px)}
         celeSet.add(el);
       }
     });
-    var cele = [].slice.call(celeSet);
+    var cele = Array.from(celeSet);
 
     var prog = window.innerHeight * 0.9;
     var ukryte = cele.filter(function (el) { return el.getBoundingClientRect().top >= prog; });
@@ -726,16 +726,14 @@ a:hover .cta-strzalka{transform:translateX(5px)}
           });
         }
         // Zwykla animacja czasowa, calkowicie niezalezna od scrolla - nic nie
-        // przechwytuje, nic nie blokuje. Odpala sie raz, gdy sekcja wjedzie
-        // w widok (IntersectionObserver - to tylko wykrycie widocznosci,
-        // NIE sledzenie pozycji scrolla; po odpaleniu dalszy scroll nie ma
-        // juz na animacje zadnego wplywu). Dzieki temu szybkie przewijanie
-        // dalej, np. od razu do Kontaktu, nigdy nic nie blokuje.
+        // przechwytuje, nic nie blokuje. Dalszy scroll (w dowolnym kierunku/
+        // tempie, np. od razu do Kontaktu) nigdy nie ma na nia wplywu.
 
-        // start: opoznienie (ms) od momentu, gdy sekcja wjedzie w widok, do
-        // rozpoczecia liczenia. stop: calkowity czas trwania (ms) samego
-        // liczenia, od startu do momentu gdy wszystkie 4 liczby sa gotowe.
-        var start = 300;
+        // start: opoznienie (ms) PO zakonczeniu animacji "pojawienia sie"
+        // bloku z paskiem (initReveal(), fade+slide, 600ms) do rozpoczecia
+        // liczenia - nie w trakcie niej. stop: czas trwania (ms) samego
+        // liczenia.
+        var start = 150;
         var stop = 1500;
 
         var uzyte = false;
@@ -757,7 +755,28 @@ a:hover .cta-strzalka{transform:translateX(5px)}
           }, start);
         }
 
-        if ('IntersectionObserver' in window) {
+        // initReveal() dziala synchronicznie PRZED initStats() (patrz koniec
+        // pliku), wiec .reveal jest juz na miejscu w tym momencie, jesli w
+        // ogole bedzie. Czekamy na jej transitionend zamiast na wlasny
+        // obserwator widocznosci - tak liczenie rusza dopiero PO tym, jak
+        // blok skonczy sie pokazywac, nie w trakcie.
+        var pasekTrack = sekcja.querySelector('.progress-bar') || sekcja;
+        var revealEl = pasekTrack.closest('.reveal');
+        if (revealEl) {
+          if (getComputedStyle(revealEl).opacity === '1') {
+            // .reveal-on juz zdazyla dojsc do konca zanim tu dotarlismy
+            // (np. wolniejszy fetch('stats.json')) - nie ma juz na co czekac
+            uruchomAnimacje();
+          } else {
+            revealEl.addEventListener('transitionend', function poReveal(e) {
+              if (e.target !== revealEl) return;
+              revealEl.removeEventListener('transitionend', poReveal);
+              uruchomAnimacje();
+            });
+          }
+        } else if ('IntersectionObserver' in window) {
+          // brak reveal (reduced-motion / IO niewspierany / sekcja juz
+          // widoczna na starcie) - wlasny obserwator widocznosci
           var io = new IntersectionObserver(function (wpisy) {
             wpisy.forEach(function (w) {
               if (!w.isIntersecting) return;
