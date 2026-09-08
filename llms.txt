@@ -25,6 +25,7 @@ Ceny są orientacyjne, finalna wycena ustalana jest indywidualnie po kontakcie.
 - [Oferta](https://jakubkacprzak.github.io/seba_strona/#oferta): trzy produkty wraz z widełkami cenowymi.
 - [Siłownia partnerska](https://jakubkacprzak.github.io/seba_strona/#silownia): Just Gym Radom, Galeria Nad Potokiem, Andrzeja Struga 73, 26-600 Radom. Czynne całą dobę, 7 dni w tygodniu. Pełny sprzęt do trójboju: monolift, ławki, platformy do martwego ciągu.
 - [Metoda](https://jakubkacprzak.github.io/seba_strona/#metoda): przebieg współpracy w czterech krokach, od wideo z trzech ćwiczeń po podsumowanie bloku.
+- [Opinie](https://jakubkacprzak.github.io/seba_strona/#opinie): zdjęcia efektów podopiecznych, publikowane za ich zgodą.
 - [FAQ](https://jakubkacprzak.github.io/seba_strona/#faq): pierwszy kontakt, terminy, rozliczenia.
 - [Kontakt](https://jakubkacprzak.github.io/seba_strona/#kontakt): formy kontaktu i czas odpowiedzi.
 
