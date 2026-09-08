@@ -14,7 +14,6 @@ samego dokumentu.
 
 - [Plany treningowe](https://jakubkacprzak.github.io/seba_strona/#oferta): cykl pisany pod dostępny sprzęt, staż i liczbę dni treningowych w tygodniu, z progresją rozpisaną do końca bloku. Od 150 zł.
 - [Plany dietetyczne](https://jakubkacprzak.github.io/seba_strona/#oferta): masa, redukcja albo przygotowanie startowe. Od 150 zł.
-- [Ebooki](https://jakubkacprzak.github.io/seba_strona/#oferta): technika trzech bojów i prowadzenie redukcji, format PDF. Od 39 zł.
 - [Coaching](https://jakubkacprzak.github.io/seba_strona/#oferta): online z korektą techniki na podstawie wideo albo stacjonarnie w Just Gym Radom, pakiety 1, 3 lub 6 miesięcy. Od 300 zł miesięcznie.
 
 Ceny są orientacyjne, finalna wycena ustalana jest indywidualnie po kontakcie.
@@ -23,10 +22,9 @@ Ceny są orientacyjne, finalna wycena ustalana jest indywidualnie po kontakcie.
 
 - [O mnie](https://jakubkacprzak.github.io/seba_strona/#o-mnie): droga od trójboju do kulturystyki, zasady prowadzenia podopiecznych.
 - [Osiągnięcia](https://jakubkacprzak.github.io/seba_strona/#osiagniecia): starty i rekordy życiowe.
-- [Oferta](https://jakubkacprzak.github.io/seba_strona/#oferta): cztery produkty wraz z widełkami cenowymi.
+- [Oferta](https://jakubkacprzak.github.io/seba_strona/#oferta): trzy produkty wraz z widełkami cenowymi.
 - [Siłownia partnerska](https://jakubkacprzak.github.io/seba_strona/#silownia): Just Gym Radom, Galeria Nad Potokiem, Andrzeja Struga 73, 26-600 Radom. Czynne całą dobę, 7 dni w tygodniu. Pełny sprzęt do trójboju: monolift, ławki, platformy do martwego ciągu.
 - [Metoda](https://jakubkacprzak.github.io/seba_strona/#metoda): przebieg współpracy w czterech krokach, od wideo z trzech ćwiczeń po podsumowanie bloku.
-- [Opinie](https://jakubkacprzak.github.io/seba_strona/#opinie): zrzuty rozmów z klientami, publikowane za ich zgodą.
 - [FAQ](https://jakubkacprzak.github.io/seba_strona/#faq): pierwszy kontakt, terminy, rozliczenia.
 - [Kontakt](https://jakubkacprzak.github.io/seba_strona/#kontakt): formy kontaktu i czas odpowiedzi.
 
