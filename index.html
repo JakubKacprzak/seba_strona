@@ -700,8 +700,6 @@
 
     #metoda .metoda-kroki::after {
       background: var(--fg);
-      transform: scaleY(var(--metoda-postep, 0));
-      transform-origin: top center;
     }
 
     /* --- galeria zdjec w sekcji O mnie --- */
@@ -1029,6 +1027,15 @@
       }
     }
 
+    @media (max-width: 1100px) {
+      .opinie-strip {
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        overflow-x: auto !important;
+        padding-bottom: 6px;
+      }
+    }
+
     @media (max-width: 614px) {
 
       .cta-solid,
@@ -1112,10 +1119,6 @@
         transition-duration: 1ms !important;
       }
 
-      #metoda .metoda-kroki::after {
-        transform: none !important;
-      }
-
       .faq-chevron {
         transition-duration: 1ms !important;
       }
@@ -1146,14 +1149,18 @@
     <a class="skip-link" href="#tresc">Przejdź do treści</a>
 
     <nav style="
-          position: sticky;
+          position: fixed;
           top: 0;
+          left: 0;
+          right: 0;
           z-index: 40;
           background: var(--nav-bg);
           backdrop-filter: var(--nav-blur);
           -webkit-backdrop-filter: var(--nav-blur);
           border-bottom: 1px solid var(--line);
           padding-top: env(safe-area-inset-top);
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
         ">
       <div class="nav-inner">
         <a class="nav-brand" href="#gora">SEBASTIAN KRAWCZYK</a>
@@ -1198,7 +1205,7 @@
       </div>
     </div>
 
-    <main id="tresc" tabindex="-1">
+    <main id="tresc" tabindex="-1" style="margin-top: calc(var(--nav-h) + env(safe-area-inset-top))">
       <header id="gora" style="
             border-bottom: 1px solid var(--line);
             display: grid;
@@ -2233,7 +2240,7 @@
               </h2>
             </div>
           </div>
-          <div style="
+          <div class="opinie-strip" style="
                 margin-top: clamp(36px, 3.8vw, 52px);
                 display: flex;
                 flex-wrap: wrap;
@@ -2550,7 +2557,7 @@
                   min-height: 48px;
                   display: inline-flex;
                   align-items: center;
-                ">Napisz e-mail</a>
+                ">Napisz e&#8209;mail</a>
           </div>
           <span style="
                 font-family: var(--m);
@@ -2690,6 +2697,13 @@
           top: 0,
           behavior: zredukowany ? "auto" : "smooth",
         });
+        // Ukrywamy od razu, nie czekamy na kolejne zdarzenie 'scroll' - na
+        // niektorych przegladarkach mobilnych (iOS Safari) ostatnia klatka
+        // animowanego scrollTo nie zawsze dostaje wlasne zdarzenie 'scroll',
+        // wiec onScrollTopVis() moglby juz nigdy nie doliczyc do pozycji 0
+        // i przycisk zostawalby widoczny mimo powrotu na gore.
+        scrollTopShown = false;
+        scrollTopBtn.classList.remove("scroll-top-on");
       });
 
       // ---------- wjazd bloków przy scrollu (IntersectionObserver) ----------
@@ -2825,38 +2839,6 @@
       }
 
       // ---------- linia postępu w sekcji Metoda ----------
-      function initMetoda() {
-        var kroki = document.querySelector("#metoda .metoda-kroki");
-        if (!kroki) return;
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          kroki.style.setProperty("--metoda-postep", "1");
-          return;
-        }
-        var metodaRaf = null;
-        function przeliczMetoda() {
-          metodaRaf = null;
-          var r = kroki.getBoundingClientRect();
-          var vh = window.innerHeight;
-          var start = vh * 0.85;
-          var koniec = vh * 0.4;
-          var zakres = r.height + start - koniec;
-          var postep =
-            zakres > 0
-              ? Math.min(1, Math.max(0, (start - r.top) / zakres))
-              : 1;
-          kroki.style.setProperty("--metoda-postep", String(postep));
-        }
-        window.addEventListener(
-          "scroll",
-          function () {
-            if (metodaRaf) return;
-            metodaRaf = requestAnimationFrame(przeliczMetoda);
-          },
-          { passive: true },
-        );
-        przeliczMetoda();
-      }
-
       // ---------- mapa: dotknij, aby wejść w interakcję ----------
       function initMapa() {
         var overlay = document.getElementById("mapa-overlay");
@@ -3036,7 +3018,6 @@
       initReveal();
       initFaqAccordion();
       initStats();
-      initMetoda();
       initMapa();
       // Rok w stopce bierzemy z zegara, zeby nie wymagal corocznej podmiany.
       // Bez JS zostaje wartosc wpisana w markupie, wiec stopka nigdy nie jest pusta.
