@@ -1,0 +1,14 @@
+# Jeden adres strony: https://trenersebaradom.pl/
+# Bez tego ta sama strona odpowiadala pod http://, https://, www. i bez www.,
+# czyli pod czterema adresami naraz.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # www. -> bez www. (od razu na https, zeby nie robic dwoch przekierowan)
+  RewriteCond %{HTTP_HOST} ^www\.trenersebaradom\.pl$ [NC]
+  RewriteRule ^ https://trenersebaradom.pl%{REQUEST_URI} [R=301,L]
+
+  # http -> https
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://trenersebaradom.pl%{REQUEST_URI} [R=301,L]
+</IfModule>
